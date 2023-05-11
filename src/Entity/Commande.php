@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CommandeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -28,6 +30,18 @@ class Commande
 
     #[ORM\Column(length: 255)]
     private ?string $utilisateur = null;
+
+    #[ORM\OneToMany(mappedBy: 'Detail', targetEntity: Detail::class)]
+    private Collection $Details;
+
+    #[ORM\ManyToOne(inversedBy: 'Commandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateur $Commande = null;
+
+    public function __construct()
+    {
+        $this->Details = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +104,40 @@ class Commande
     public function setUtilisateur(string $utilisateur): self
     {
         $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    public function addDetail(Detail $detail): self
+    {
+        if (!$this->Details->contains($detail)) {
+            $this->Details->add($detail);
+            $detail->setDetail($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDetail(Detail $detail): self
+    {
+        if ($this->Details->removeElement($detail)) {
+            // set the owning side to null (unless already changed)
+            if ($detail->getDetail() === $this) {
+                $detail->setDetail(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCommande(): ?Utilisateur
+    {
+        return $this->Commande;
+    }
+
+    public function setCommande(?Utilisateur $Commande): self
+    {
+        $this->Commande = $Commande;
 
         return $this;
     }

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CategorieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
@@ -24,6 +26,14 @@ class Categorie
 
     #[ORM\Column(length: 120)]
     private ?string $plats = null;
+
+    #[ORM\OneToMany(mappedBy: 'Categorie', targetEntity: plat::class)]
+    private Collection $Categorie;
+
+    public function __construct()
+    {
+        $this->Categorie = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -66,14 +76,44 @@ class Categorie
         return $this;
     }
 
-    public function getPlats(): ?string
+    public function getplats(): ?string
     {
         return $this->plats;
     }
 
-    public function setPlats(string $plats): self
+    public function setplats(string $plats): self
     {
         $this->plats = $plats;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, plat>
+     */
+    public function getCategorie(): Collection
+    {
+        return $this->Categorie;
+    }
+
+    public function addCategorie(plat $categorie): self
+    {
+        if (!$this->Categorie->contains($categorie)) {
+            $this->Categorie->add($categorie);
+            $categorie->setCategorie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategorie(plat $categorie): self
+    {
+        if ($this->Categorie->removeElement($categorie)) {
+            // set the owning side to null (unless already changed)
+            if ($categorie->getCategorie() === $this) {
+                $categorie->setCategorie(null);
+            }
+        }
 
         return $this;
     }

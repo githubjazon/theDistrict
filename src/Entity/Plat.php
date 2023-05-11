@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\PlatsRepository;
+use App\Repository\PlatRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PlatsRepository::class)]
-class Plats
+#[ORM\Entity(repositoryClass: PlatRepository::class)]
+class Plat
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,6 +36,19 @@ class Plats
 
     #[ORM\Column(length: 255)]
     private ?string $details = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Categorie')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Categorie $Categorie = null;
+
+    #[ORM\OneToMany(mappedBy: 'Plat', targetEntity: Detail::class)]
+    private Collection $Plat;
+
+    public function __construct()
+    {
+        $this->Plat = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -123,4 +138,35 @@ class Plats
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Detail>
+     */
+    public function getPlat(): Collection
+    {
+        return $this->Plat;
+    }
+
+    public function addPlat(Detail $plat): self
+    {
+        if (!$this->Plat->contains($plat)) {
+            $this->Plat->add($plat);
+            $plat->setPlat($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlat(Detail $plat): self
+    {
+        if ($this->Plat->removeElement($plat)) {
+            // set the owning side to null (unless already changed)
+            if ($plat->getPlat() === $this) {
+                $plat->setPlat(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

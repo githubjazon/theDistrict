@@ -5,8 +5,8 @@ namespace App\Entity;
 use App\Repository\DetailsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: DetailsRepository::class)]
-class Details
+#[ORM\Entity(repositoryClass: DetailRepository::class)]
+class Detail
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,6 +21,14 @@ class Details
 
     #[ORM\Column(length: 255)]
     private ?string $plat = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Plat')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Plat $Plat = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Details')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Commande $Detail = null;
 
     public function getId(): ?int
     {
@@ -59,6 +67,18 @@ class Details
     public function setPlat(string $plat): self
     {
         $this->plat = $plat;
+
+        return $this;
+    }
+
+    public function getDetail(): ?Commande
+    {
+        return $this->Detail;
+    }
+
+    public function setDetail(?Commande $Detail): self
+    {
+        $this->Detail = $Detail;
 
         return $this;
     }

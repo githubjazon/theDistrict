@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
@@ -42,6 +44,14 @@ class Utilisateur
 
     #[ORM\Column(length: 255)]
     private ?string $commandes = null;
+
+    #[ORM\OneToMany(mappedBy: 'Commande', targetEntity: Commande::class)]
+    private Collection $Commandes;
+
+    public function __construct()
+    {
+        $this->Commandes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -164,6 +174,28 @@ class Utilisateur
     public function setCommandes(string $commandes): self
     {
         $this->commandes = $commandes;
+
+        return $this;
+    }
+
+    public function addCommande(Commande $commande): self
+    {
+        if (!$this->Commandes->contains($commande)) {
+            $this->Commandes->add($commande);
+            $commande->setCommande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommande(Commande $commande): self
+    {
+        if ($this->Commandes->removeElement($commande)) {
+            // set the owning side to null (unless already changed)
+            if ($commande->getCommande() === $this) {
+                $commande->setCommande(null);
+            }
+        }
 
         return $this;
     }
