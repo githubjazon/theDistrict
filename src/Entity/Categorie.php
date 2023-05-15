@@ -100,7 +100,7 @@ class Categorie
     {
         if (!$this->Categorie->contains($categorie)) {
             $this->Categorie->add($categorie);
-            $categorie->setCategorie($this);
+            $categorie->setCategorie($this); //à corriger
         }
 
         return $this;
@@ -111,7 +111,7 @@ class Categorie
         if ($this->Categorie->removeElement($categorie)) {
             // set the owning side to null (unless already changed)
             if ($categorie->getCategorie() === $this) {
-                $categorie->setCategorie(null);
+                $categorie->setCategorie(null);   //à corriger
             }
         }
 
