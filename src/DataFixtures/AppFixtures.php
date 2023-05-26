@@ -35,9 +35,6 @@ class AppFixtures extends Fixture
         $Plat = new Plat();
         
         $Utilisateur = new Utilisateur();
-        
-
-
 
         $manager->flush();
     }
